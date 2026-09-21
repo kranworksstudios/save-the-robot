@@ -513,12 +513,19 @@ kbd {
   flex-direction: column;
   gap: 2px;
   align-items: center;
+  text-align: center;
+  width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  padding: 0 4px;
 }
 
 .footer-author {
   font-size: 0.72rem;
   color: rgba(148, 163, 184, 0.6);
   letter-spacing: 0.4px;
+  display: block;
+  margin-top: 2px;
 }
 
 /* Level Clear Card */
