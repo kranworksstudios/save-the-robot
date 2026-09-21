@@ -14,7 +14,8 @@ const dom = {
   hudTimer: document.getElementById('hud-timer'),
   btnAudio: document.getElementById('btn-audio-toggle'),
   btnPause: document.getElementById('btn-pause-toggle'),
-  mobileTouchControls: document.getElementById('mobile-touch-controls'),
+  mobileTouchControls: null, // removido — controles agora são externos
+  externalControls: document.getElementById('external-controls'),
 
   screenPlayerName: document.getElementById('screen-player-name'),
   screenMenu: document.getElementById('screen-menu'),
@@ -265,7 +266,7 @@ function changeScene(scene) {
   dom.screenVictory.classList.add('hidden');
   if (dom.screenRanking) dom.screenRanking.classList.add('hidden');
   if (dom.screenRobotSelect) dom.screenRobotSelect.classList.add('hidden');
-  if (dom.mobileTouchControls) dom.mobileTouchControls.classList.add('hidden');
+  if (dom.externalControls) dom.externalControls.classList.add('hidden');
 
   if (scene === 'PLAYER_NAME') {
     levelClearCountdown = 0;
@@ -309,7 +310,7 @@ function changeScene(scene) {
   } else if (scene === 'PLAYING') {
     levelClearCountdown = 0;
     dom.hud.classList.remove('hidden');
-    if (dom.mobileTouchControls) dom.mobileTouchControls.classList.remove('hidden');
+    if (dom.externalControls) dom.externalControls.classList.remove('hidden');
   } else if (scene === 'LEVEL_CLEAR') {
     dom.hud.classList.remove('hidden');
     dom.screenLevelClear.classList.remove('hidden');

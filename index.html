@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Robô em Recuperação — Trabalho Escolar</title>
 
   <!-- PWA: Manifesto e Tema -->
@@ -17,7 +18,8 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
   <!-- SEO e compartilhamento -->
-  <meta name="description" content="Ajude o robô a coletar engrenagens e recuperar energia! Jogo da Feira Cultural 2026.">
+  <meta name="description"
+    content="Ajude o robô a coletar engrenagens e recuperar energia! Jogo da Feira Cultural 2026.">
 
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
@@ -57,12 +59,6 @@
       <!-- Mensagens de Feedback em Jogo -->
       <div id="toast-message" class="toast-popup hidden"></div>
 
-      <!-- Controles de Toque Virtuais para Celular (Visíveis durante o jogo em telas touch/mobile) -->
-      <div id="mobile-touch-controls" class="touch-controls-layer hidden">
-        <button type="button" id="btn-touch-left" class="touch-btn touch-btn-left" aria-label="Mover para Esquerda">◀</button>
-        <button type="button" id="btn-touch-right" class="touch-btn touch-btn-right" aria-label="Mover para Direita">▶</button>
-      </div>
-
       <!-- Telas de Menu / Estado -->
       <!-- Tela 0: Identificação do Jogador (Nome para o Ranking) -->
       <div id="screen-player-name" class="screen-modal hidden">
@@ -70,7 +66,7 @@
           <div class="robot-preview-frame">
             <canvas id="name-robot-canvas" width="90" height="90" class="preview-robot-canvas"></canvas>
           </div>
-          <div class="fair-badge">🎪 FEIRA CULTURAL 2026</div>
+          <div class="fair-badge">🎪 FEIRA CULTURAL 2026 - AGNUS DEI</div>
           <h1 class="game-title">QUEM VAI JOGAR?</h1>
           <p class="game-story">
             Digite seu nome para registrar suas engrenagens no <strong>Ranking Oficial</strong> da feira!
@@ -79,7 +75,8 @@
           <form id="form-player-name" class="player-name-form" onsubmit="return false;">
             <div class="input-wrapper">
               <span class="input-icon">👤</span>
-              <input type="text" id="input-player-name" class="styled-input" placeholder="Seu nome ou apelido" maxlength="14" autocomplete="off">
+              <input type="text" id="input-player-name" class="styled-input" placeholder="Seu nome ou apelido"
+                maxlength="14" autocomplete="off">
             </div>
             <div class="player-name-actions">
               <button type="submit" id="btn-save-name" class="btn-primary">COMEÇAR ➔</button>
@@ -87,7 +84,10 @@
               <button type="button" id="btn-intro-ranking" class="btn-secondary">🏆 VER RANKING</button>
             </div>
           </form>
-          <footer class="school-footer">Robô em Recuperação • Trabalho Escolar 100% Offline</footer>
+          <footer class="school-footer">
+            Robô em Recuperação • Trabalho Escolar 100% Offline
+            <span class="footer-author">Feito por G.M.P.</span>
+          </footer>
         </div>
       </div>
 
@@ -98,7 +98,8 @@
             <span class="player-tag-text">👤 Jogador: <strong id="menu-player-display">Jogador</strong></span>
             <button id="btn-change-player" class="btn-text-action" title="Trocar de jogador">[✏️ Trocar]</button>
           </div>
-          <div class="robot-preview-frame robot-preview-clickable" id="menu-robot-frame" title="Clique para trocar de robô">
+          <div class="robot-preview-frame robot-preview-clickable" id="menu-robot-frame"
+            title="Clique para trocar de robô">
             <canvas id="menu-robot-canvas" width="100" height="100" class="preview-robot-canvas"></canvas>
             <span class="robot-change-hint">Trocar 🔄</span>
           </div>
@@ -164,7 +165,10 @@
             <button id="btn-menu-robot-select" class="btn-secondary">🤖 ESCOLHER ROBÔ</button>
             <button id="btn-menu-ranking" class="btn-secondary btn-ranking-highlight">🏆 RANKING</button>
           </div>
-          <footer class="school-footer">Trabalho Escolar • 100% Offline • Apresentação</footer>
+          <footer class="school-footer">
+            Trabalho Escolar • 100% Offline • Apresentação
+            <span class="footer-author">Feito por G.M.P.</span>
+          </footer>
         </div>
       </div>
 
@@ -290,7 +294,8 @@
 
           <div class="modal-actions ranking-actions">
             <button id="btn-close-ranking" class="btn-primary">VOLTAR</button>
-            <button id="btn-clear-ranking" class="btn-danger-outline" title="Zerar placar para novos testes">🗑️ Limpar Placar</button>
+            <button id="btn-clear-ranking" class="btn-danger-outline" title="Zerar placar para novos testes">🗑️ Limpar
+              Placar</button>
           </div>
         </div>
       </div>
@@ -430,6 +435,12 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Controles Externos de Movimento (abaixo do mapa, em telas touch) -->
+  <div id="external-controls" class="external-controls hidden">
+    <button type="button" id="btn-move-left" class="ext-ctrl-btn" aria-label="Mover para Esquerda">◀</button>
+    <button type="button" id="btn-move-right" class="ext-ctrl-btn" aria-label="Mover para Direita">▶</button>
   </div>
 
   <!-- Scripts Modulares em Ordem de Dependência -->

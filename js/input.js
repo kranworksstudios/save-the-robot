@@ -42,11 +42,11 @@ class InputManager {
       }
     });
 
-    // Controles Virtuais de Toque para Celular
-    const btnLeft = document.getElementById('btn-touch-left');
-    const btnRight = document.getElementById('btn-touch-right');
+    // Controles Externos de Movimento (botões abaixo do canvas)
+    const btnLeft = document.getElementById('btn-move-left');
+    const btnRight = document.getElementById('btn-move-right');
 
-    const setupTouchBtn = (btn, keyProp) => {
+    const setupCtrlBtn = (btn, keyProp) => {
       if (!btn) return;
       const startPress = (e) => {
         if (e.cancelable) e.preventDefault();
@@ -68,8 +68,8 @@ class InputManager {
       btn.addEventListener('mouseleave', endPress);
     };
 
-    setupTouchBtn(btnLeft, 'left');
-    setupTouchBtn(btnRight, 'right');
+    setupCtrlBtn(btnLeft, 'left');
+    setupCtrlBtn(btnRight, 'right');
   }
 
   handleKeyDown(e) {
