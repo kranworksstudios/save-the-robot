@@ -1,0 +1,52 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0d1220"/>
+      <stop offset="100%" stop-color="#080c18"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Fundo -->
+  <rect width="192" height="192" rx="34" fill="url(#bg)"/>
+  <!-- Glow central -->
+  <circle cx="96" cy="96" r="72" fill="url(#glow)"/>
+  <!-- Corpo -->
+  <rect x="54" y="74" width="84" height="64" rx="13" fill="#1e293b" stroke="#38bdf8" stroke-width="4.5"/>
+  <!-- Barras de energia -->
+  <rect x="65" y="100" width="14" height="26" rx="5" fill="#38bdf8" opacity="0.85"/>
+  <rect x="82" y="100" width="14" height="26" rx="5" fill="#0ea5e9" opacity="0.75"/>
+  <rect x="99" y="100" width="14" height="26" rx="5" fill="#1e40af" opacity="0.70"/>
+  <!-- Cabeça -->
+  <rect x="62" y="38" width="68" height="38" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="4.5"/>
+  <!-- Olho esquerdo -->
+  <circle cx="79" cy="57" r="12" fill="#38bdf8" opacity="0.3"/>
+  <circle cx="79" cy="57" r="6.5" fill="#38bdf8"/>
+  <circle cx="76" cy="54" r="2.2" fill="white"/>
+  <!-- Olho direito -->
+  <circle cx="113" cy="57" r="12" fill="#38bdf8" opacity="0.3"/>
+  <circle cx="113" cy="57" r="6.5" fill="#38bdf8"/>
+  <circle cx="110" cy="54" r="2.2" fill="white"/>
+  <!-- Antena -->
+  <line x1="96" y1="38" x2="96" y2="24" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="96" cy="20" r="6" fill="#7dd3fc"/>
+  <!-- Braços -->
+  <rect x="34" y="78" width="20" height="42" rx="8" fill="#334155" stroke="#38bdf8" stroke-width="2.5"/>
+  <rect x="138" y="78" width="20" height="42" rx="8" fill="#334155" stroke="#38bdf8" stroke-width="2.5"/>
+  <!-- Pernas -->
+  <rect x="65" y="136" width="23" height="30" rx="6" fill="#334155" stroke="#38bdf8" stroke-width="2.5"/>
+  <rect x="104" y="136" width="23" height="30" rx="6" fill="#334155" stroke="#38bdf8" stroke-width="2.5"/>
+  <!-- Rodas -->
+  <ellipse cx="76" cy="165" rx="14" ry="8" fill="#38bdf8"/>
+  <ellipse cx="115" cy="165" rx="14" ry="8" fill="#38bdf8"/>
+  <!-- Engrenagem dourada -->
+  <circle cx="152" cy="72" r="10" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="152" cy="60" r="4" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="152" cy="84" r="4" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="141" cy="66" r="4" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="163" cy="66" r="4" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="141" cy="78" r="4" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="163" cy="78" r="4" fill="#f59e0b" opacity="0.8"/>
+</svg>

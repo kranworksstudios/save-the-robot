@@ -1,0 +1,35 @@
+{
+  "name": "Rob\u00f4 em Recupera\u00e7\u00e3o",
+  "short_name": "Save the Robot",
+  "description": "Ajude o rob\u00f4 a coletar engrenagens e recuperar energia! Jogo da Feira Cultural 2026.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0f19",
+  "theme_color": "#38bdf8",
+  "lang": "pt-BR",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

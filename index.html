@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Robô em Recuperação — Trabalho Escolar</title>
+
+  <!-- PWA: Manifesto e Tema -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#38bdf8">
+
+  <!-- PWA: Suporte iOS (Safari) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Save the Robot">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- SEO e compartilhamento -->
+  <meta name="description" content="Ajude o robô a coletar engrenagens e recuperar energia! Jogo da Feira Cultural 2026.">
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="game-container">
+    <!-- Canvas de Renderização (960 x 540) -->
+    <canvas id="game-canvas" width="960" height="540"></canvas>
+
+    <!-- Overlay de Interface do Usuário (HUD e Menus) -->
+    <div id="ui-overlay">
+      <!-- HUD Superior durante o Gameplay -->
+      <header id="game-hud" class="hud-layer hidden">
+        <div class="hud-left">
+          <div id="hud-level-title" class="hud-badge">NÍVEL 1: FERRO-VELHO</div>
+          <div class="hud-gears-tracker">
+            <span class="gear-icon">⚙️</span>
+            <span id="hud-gears-count">0 / 10</span>
+            <div class="progress-bar-bg">
+              <div id="hud-progress-fill" class="progress-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-center">
+          <div id="hud-timer" class="timer-display">00:30</div>
+        </div>
+
+        <div class="hud-right">
+          <button id="btn-audio-toggle" class="hud-btn" title="Ativar/Desativar Som" aria-label="Som">🔊</button>
+          <button id="btn-pause-toggle" class="hud-btn" title="Pausar o Jogo (P)" aria-label="Pausa">⏸</button>
+        </div>
+      </header>
+
+      <!-- Mensagens de Feedback em Jogo -->
+      <div id="toast-message" class="toast-popup hidden"></div>
+
+      <!-- Controles de Toque Virtuais para Celular (Visíveis durante o jogo em telas touch/mobile) -->
+      <div id="mobile-touch-controls" class="touch-controls-layer hidden">
+        <button type="button" id="btn-touch-left" class="touch-btn touch-btn-left" aria-label="Mover para Esquerda">◀</button>
+        <button type="button" id="btn-touch-right" class="touch-btn touch-btn-right" aria-label="Mover para Direita">▶</button>
+      </div>
+
+      <!-- Telas de Menu / Estado -->
+      <!-- Tela 0: Identificação do Jogador (Nome para o Ranking) -->
+      <div id="screen-player-name" class="screen-modal hidden">
+        <div class="modal-card player-name-card">
+          <div class="robot-preview-frame">
+            <canvas id="name-robot-canvas" width="90" height="90" class="preview-robot-canvas"></canvas>
+          </div>
+          <div class="fair-badge">🎪 FEIRA CULTURAL 2026</div>
+          <h1 class="game-title">QUEM VAI JOGAR?</h1>
+          <p class="game-story">
+            Digite seu nome para registrar suas engrenagens no <strong>Ranking Oficial</strong> da feira!
+          </p>
+
+          <form id="form-player-name" class="player-name-form" onsubmit="return false;">
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="input-player-name" class="styled-input" placeholder="Seu nome ou apelido" maxlength="14" autocomplete="off">
+            </div>
+            <div class="player-name-actions">
+              <button type="submit" id="btn-save-name" class="btn-primary">COMEÇAR ➔</button>
+              <button type="button" id="btn-intro-robot-select" class="btn-secondary">🤖 ESCOLHER ROBÔ</button>
+              <button type="button" id="btn-intro-ranking" class="btn-secondary">🏆 VER RANKING</button>
+            </div>
+          </form>
+          <footer class="school-footer">Robô em Recuperação • Trabalho Escolar 100% Offline</footer>
+        </div>
+      </div>
+
+      <!-- Tela 1: Menu Principal -->
+      <div id="screen-menu" class="screen-modal hidden">
+        <div class="modal-card menu-card">
+          <div class="player-tag-bar">
+            <span class="player-tag-text">👤 Jogador: <strong id="menu-player-display">Jogador</strong></span>
+            <button id="btn-change-player" class="btn-text-action" title="Trocar de jogador">[✏️ Trocar]</button>
+          </div>
+          <div class="robot-preview-frame robot-preview-clickable" id="menu-robot-frame" title="Clique para trocar de robô">
+            <canvas id="menu-robot-canvas" width="100" height="100" class="preview-robot-canvas"></canvas>
+            <span class="robot-change-hint">Trocar 🔄</span>
+          </div>
+          <h1 class="game-title">ROBÔ EM RECUPERAÇÃO</h1>
+          <p class="game-story">
+            Nosso amigo robô está triste, fraco e sem energia.<br>
+            Ajude-o a coletar engrenagens e desviar dos perigos pelos 5 cenários para deixá-lo forte e muito feliz!
+          </p>
+
+          <!-- Legenda Visual dos Itens (O que Coletar vs O que Desviar) -->
+          <div class="items-legend-box">
+            <div class="legend-col legend-col-good">
+              <div class="legend-col-header tag-good">
+                <span class="legend-badge-icon">✅</span>
+                <span>COLETE (+ ENERGIA)</span>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="legend-gear-common" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Engrenagem Dourada</span>
+                  <span class="legend-desc val-gold">+1 Ponto para a meta</span>
+                </div>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="legend-gear-rare" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Engrenagem Azul Rara</span>
+                  <span class="legend-desc val-cyan">+3 Pontos (Super Carga)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="legend-col legend-col-bad">
+              <div class="legend-col-header tag-bad">
+                <span class="legend-badge-icon">❌</span>
+                <span>DESVIE (PERIGO)</span>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="legend-hazard-scrap" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Sucatas & Latas</span>
+                  <span class="legend-desc val-red">Perde -1 engrenagem</span>
+                </div>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="legend-hazard-bolt" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Raios, Vapor & Plasma</span>
+                  <span class="legend-desc val-red">Dano & Perde até -3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls-guide">
+            <div class="control-badge"><kbd>←</kbd> <kbd>→</kbd> ou <kbd>A</kbd> <kbd>D</kbd> Mover</div>
+            <div class="control-badge"><span class="mouse-icon">🖱️</span> Mover com o Mouse</div>
+            <div class="control-badge"><kbd>P</kbd> Pausar</div>
+            <div class="control-badge"><kbd>M</kbd> Som</div>
+          </div>
+          <div class="menu-action-buttons">
+            <button id="btn-start-game" class="btn-primary">JOGAR AGORA</button>
+            <button id="btn-menu-robot-select" class="btn-secondary">🤖 ESCOLHER ROBÔ</button>
+            <button id="btn-menu-ranking" class="btn-secondary btn-ranking-highlight">🏆 RANKING</button>
+          </div>
+          <footer class="school-footer">Trabalho Escolar • 100% Offline • Apresentação</footer>
+        </div>
+      </div>
+
+      <!-- Tela de Transição / Nível Concluído -->
+      <div id="screen-level-clear" class="screen-modal hidden">
+        <div class="modal-card level-clear-card">
+          <h2 class="level-clear-title">✨ NÍVEL CONCLUÍDO! ✨</h2>
+          <p id="level-clear-desc" class="level-clear-desc">O robô absorveu nova energia e está mais disposto!</p>
+          <div class="level-clear-avatar-frame">
+            <canvas id="level-clear-robot-canvas" width="120" height="120" class="preview-robot-canvas"></canvas>
+          </div>
+          <button id="btn-next-level" class="btn-primary">AVANÇAR PARA O PRÓXIMO NÍVEL</button>
+        </div>
+      </div>
+
+      <!-- Tela de Pausa -->
+      <div id="screen-pause" class="screen-modal hidden">
+        <div class="modal-card pause-card">
+          <h2>JOGO EM PAUSA</h2>
+          <p>Apresentação suspensa temporariamente. O tempo e a física estão congelados.</p>
+
+          <!-- Legenda de Consulta Rápida na Pausa -->
+          <div class="items-legend-box pause-legend">
+            <div class="legend-col legend-col-good">
+              <div class="legend-col-header tag-good">
+                <span class="legend-badge-icon">✅</span>
+                <span>COLETE (+ ENERGIA)</span>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="pause-gear-common" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Engrenagem Dourada (+1)</span>
+                </div>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="pause-gear-rare" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Engrenagem Azul Rara (+3)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="legend-col legend-col-bad">
+              <div class="legend-col-header tag-bad">
+                <span class="legend-badge-icon">❌</span>
+                <span>DESVIE (PERIGO)</span>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="pause-hazard-scrap" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Sucatas & Latas (-1)</span>
+                </div>
+              </div>
+              <div class="legend-item-row">
+                <canvas id="pause-hazard-bolt" width="30" height="30" class="legend-canvas"></canvas>
+                <div class="legend-info">
+                  <span class="legend-name">Raios, Vapor & Plasma (-2/-3)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="btn-resume-game" class="btn-primary">CONTINUAR</button>
+            <button id="btn-restart-game" class="btn-secondary">REINICIAR DO NÍVEL 1</button>
+            <button id="btn-pause-menu" class="btn-secondary">VOLTAR AO MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Game Over -->
+      <div id="screen-game-over" class="screen-modal hidden">
+        <div class="modal-card game-over-card">
+          <div class="game-over-icon">⚠️</div>
+          <h2 class="game-over-title">A ENERGIA ACABOU!</h2>
+          <p id="game-over-msg">O tempo da fase esgotou antes de juntar as engrenagens necessárias.</p>
+          <div class="modal-actions">
+            <button id="btn-retry-game" class="btn-primary">TENTAR NOVAMENTE</button>
+            <button id="btn-game-over-ranking" class="btn-secondary">🏆 RANKING</button>
+            <button id="btn-game-over-menu" class="btn-secondary">VOLTAR AO MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela de Vitória Final -->
+      <div id="screen-victory" class="screen-modal hidden">
+        <div class="modal-card victory-card">
+          <div class="victory-confetti-badge">🎉 VITÓRIA GLORIOSA! 🎉</div>
+          <h1 class="victory-title">MISSÃO CUMPRIDA!</h1>
+          <p class="victory-subtitle">O robô agora está reluzente, forte e super feliz!</p>
+          <div class="victory-avatar-frame">
+            <canvas id="victory-robot-canvas" width="140" height="140"
+              class="preview-robot-canvas victory-robot-canvas"></canvas>
+          </div>
+          <div class="stats-box">
+            <div class="stat-item">
+              <span class="stat-label">Total de Engrenagens:</span>
+              <span id="stat-total-gears" class="stat-val">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Tempo Total de Partida:</span>
+              <span id="stat-total-time" class="stat-val">00:00</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-play-again" class="btn-primary">JOGAR NOVAMENTE</button>
+            <button id="btn-victory-ranking" class="btn-secondary">🏆 RANKING</button>
+            <button id="btn-victory-menu" class="btn-secondary">VOLTAR AO MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela Modal de Ranking / Placar de Líderes (100% Offline) -->
+      <div id="screen-ranking" class="screen-modal hidden">
+        <div class="modal-card ranking-card">
+          <div class="ranking-header-badge">🎪 FEIRA CULTURAL 2026</div>
+          <h2 class="ranking-title">🏆 PLACAR DE LÍDERES</h2>
+          <p class="ranking-subtitle">Melhores pontuações registradas no estande</p>
+
+          <div id="ranking-list-container" class="ranking-list-box">
+            <!-- Inserido dinamicamente via RankingManager -->
+          </div>
+
+          <div class="modal-actions ranking-actions">
+            <button id="btn-close-ranking" class="btn-primary">VOLTAR</button>
+            <button id="btn-clear-ranking" class="btn-danger-outline" title="Zerar placar para novos testes">🗑️ Limpar Placar</button>
+          </div>
+        </div>
+      </div>
+      <!-- Tela Modal de Seleção de Robôs / Personagens -->
+      <div id="screen-robot-select" class="screen-modal hidden">
+        <div class="modal-card robot-select-card">
+          <div class="fair-badge">🎪 FEIRA CULTURAL 2026</div>
+          <h2 class="robot-select-title">🤖 ESCOLHA SEU ROBÔ</h2>
+          <p class="robot-select-subtitle">Selecione o modelo que você vai guiar pelos 5 cenários!</p>
+
+          <div class="robot-cards-grid">
+            <!-- Card 1: Robô Rosa -->
+            <div class="robot-card robot-card-pink" id="card-robot-hover" data-robot="HOVER">
+              <div class="robot-card-badge">🌸 Rosa • Planador</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-hover" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Rosa</h3>
+              <p class="robot-card-desc">Armadura rosa com propulsor flutuante e deslize macio.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Agilidade:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="HOVER">ESCOLHER</button>
+            </div>
+
+            <!-- Card 2: Robô Azul (Padrão Selecionado) -->
+            <div class="robot-card selected robot-card-blue" id="card-robot-tracks" data-robot="TRACKS">
+              <div class="robot-card-badge">🔷 Azul • Equilibrado</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-tracks" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Azul</h3>
+              <p class="robot-card-desc">Chassi azul tecnológico com esteiras de trator e firmeza máxima.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Controle:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="TRACKS">✔️ SELECIONADO</button>
+            </div>
+
+            <!-- Card 3: Robô Verde -->
+            <div class="robot-card robot-card-green" id="card-robot-wheels" data-robot="WHEELS">
+              <div class="robot-card-badge">🟢 Verde • Alta Vel.</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-wheels" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Verde</h3>
+              <p class="robot-card-desc">Visual verde esmeralda com rodas esportivas e arrancada rápida (+15%).</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Velocidade:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="WHEELS">ESCOLHER</button>
+            </div>
+
+            <!-- Card 4: Robô Laranja -->
+            <div class="robot-card robot-card-orange" id="card-robot-orange" data-robot="ORANGE">
+              <div class="robot-card-badge">🟠 Laranja • Monoroda</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-orange" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Laranja</h3>
+              <p class="robot-card-desc">Chassi laranja solar com monoroda giroscópica e alta estabilidade.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Estabilidade:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="ORANGE">ESCOLHER</button>
+            </div>
+
+            <!-- Card 5: Robô Preto -->
+            <div class="robot-card robot-card-black" id="card-robot-black" data-robot="BLACK">
+              <div class="robot-card-badge">⚫ Preto • Stealth</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-black" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Preto</h3>
+              <p class="robot-card-desc">Blindagem ônix fosca com fibra de carbono e amortecimento silencioso.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Blindagem:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="BLACK">ESCOLHER</button>
+            </div>
+
+            <!-- Card 6: Robô Roxo -->
+            <div class="robot-card robot-card-purple" id="card-robot-purple" data-robot="PURPLE">
+              <div class="robot-card-badge">🟣 Roxo • Cósmico</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-purple" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Roxo</h3>
+              <p class="robot-card-desc">Design violeta hi-tech com orbes gravitacionais de energia cósmica.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Energia:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="PURPLE">ESCOLHER</button>
+            </div>
+
+            <!-- Card 7: Robô Vermelho -->
+            <div class="robot-card robot-card-red" id="card-robot-red" data-robot="RED">
+              <div class="robot-card-badge">🔴 Vermelho • Turbo</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-red" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Vermelho</h3>
+              <p class="robot-card-desc">Pintura esportiva vermelha com turbinas flamejantes e super arrancada.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Aceleração:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="RED">ESCOLHER</button>
+            </div>
+
+            <!-- Card 8: Robô Amarelo -->
+            <div class="robot-card robot-card-yellow" id="card-robot-yellow" data-robot="YELLOW">
+              <div class="robot-card-badge">🟡 Amarelo • Elétrico</div>
+              <div class="robot-card-canvas-frame">
+                <canvas id="preview-card-yellow" width="100" height="100" class="card-canvas"></canvas>
+              </div>
+              <h3 class="robot-card-name">Robô Amarelo</h3>
+              <p class="robot-card-desc">Chassi amarelo reluzente com bobinas de choque e condutores elétricos.</p>
+              <div class="robot-card-stat">
+                <span class="stat-label">Energia Elétrica:</span>
+                <span class="stat-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <button type="button" class="btn-select-robot" data-select="YELLOW">ESCOLHER</button>
+            </div>
+          </div>
+
+          <div class="modal-actions robot-select-actions">
+            <button id="btn-confirm-robot-select" class="btn-primary">CONFIRMAR</button>
+            <button id="btn-close-robot-select" class="btn-secondary">VOLTAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts Modulares em Ordem de Dependência -->
+  <script src="js/state.js"></script>
+  <script src="js/ranking.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- PWA: Registro do Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('[PWA] Service Worker registrado:', reg.scope))
+          .catch(err => console.warn('[PWA] Falha ao registrar SW:', err));
+      });
+    }
+  </script>
+</body>
+
+</html>

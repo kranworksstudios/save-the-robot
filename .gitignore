@@ -1,0 +1,13 @@
+# Arquivos de desenvolvimento — não enviar para o GitHub
+scratch/
+*.md
+!README.md
+High_Level_Desing.md
+Low_Level_Desing.md
+Discovery.md
+Developer.md
+STATUS.md
+WORKFLOW.md
+docs/
+generate-icons.js
+node_modules/
