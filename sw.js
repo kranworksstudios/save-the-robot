@@ -4,7 +4,7 @@
  * Garante 100% de funcionamento offline após a primeira visita.
  */
 
-const CACHE_NAME = 'robo-em-recuperacao-v4';
+const CACHE_NAME = 'robo-em-recuperacao-v5';
 
 // Todos os recursos do jogo a serem cacheados na instalação
 const ASSETS_TO_CACHE = [

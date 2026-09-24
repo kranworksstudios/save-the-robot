@@ -229,12 +229,12 @@ body {
    MODAIS E TELAS SOBREPOSTAS (GLASSMORPHISM)
    ======================================================== */
 .screen-modal {
-  position: absolute;
+  position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(7, 10, 19, 0.82);
+  background: rgba(7, 10, 19, 0.88);
   backdrop-filter: blur(8px);
   z-index: 20;
   opacity: 1;
@@ -242,6 +242,7 @@ body {
   transition: opacity 0.3s ease, visibility 0.3s ease;
   pointer-events: auto;
   padding: 24px;
+  overflow-y: auto;
 }
 
 .screen-modal.hidden,
@@ -262,6 +263,8 @@ body {
   width: 100%;
   text-align: center;
   position: relative;
+  margin: auto; /* centraliza dentro do flex + overflow-y:auto */
+  flex-shrink: 0; /* não comprime o card quando modal for menor que o conteúdo */
 }
 
 .menu-card {
